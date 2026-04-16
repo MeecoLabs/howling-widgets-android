@@ -5,14 +5,25 @@
     <uses-permission android:name="org.breezyweather.READ_PROVIDER" />
 
     <application
+        android:name=".MainApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.HowlingWidgets"
-        android:name=".MainApplication">
+        android:theme="@style/Theme.HowlingWidgets">
+        <activity
+            android:name=".ui.appinfo.AppInfoActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <activity
             android:name=".ui.hourly.settings.WidgetSettingsActivity"
             android:exported="true">
@@ -30,6 +41,7 @@
             <intent-filter>
                 <action android:name="org.breezyweather.ACTION_UPDATE_NOTIFIER" />
             </intent-filter>
+
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/howling_app_widget_info" />

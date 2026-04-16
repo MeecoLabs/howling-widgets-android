@@ -1,0 +1,180 @@
+package eu.meecolabs.howlingwidgets.ui.appinfo
+
+import android.content.Intent
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
+import androidx.navigation3.runtime.NavKey
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieAnimatable
+import com.airbnb.lottie.compose.rememberLottieComposition
+import eu.meecolabs.howlingwidgets.BuildConfig
+import eu.meecolabs.howlingwidgets.R
+import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+
+
+@Serializable
+data object AppInfoDestination : NavKey
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AppInfoScreen(
+    onDismiss: (() -> Unit)? = null
+) {
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.clear_day))
+    val animatable = rememberLottieAnimatable()
+
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    LaunchedEffect(animatable) {
+        animatable.animate(composition)
+    }
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                navigationIcon = {
+                    onDismiss?.let { onDismiss ->
+                        IconButton(
+                            onClick = onDismiss
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_back),
+                                contentDescription = "Navigate back"
+                            )
+                        }
+                    }
+                },
+                title = {
+                    Text(text = stringResource(R.string.app_name))
+                }
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)
+            ) {
+                Text(
+                    text = "App Version",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.weight(1f)
+                )
+
+                Text(
+                    text = "${BuildConfig.VERSION_NAME}-b${BuildConfig.VERSION_CODE}",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+
+            HorizontalDivider()
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)
+            ) {
+                Text(
+                    text = "Icons",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.weight(1f)
+                )
+
+                TextButton(
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW, "https://meteocons.com".toUri())
+                        context.startActivity(intent)
+                    }
+                ) {
+                    LottieAnimation(
+                        composition,
+                        progress = { animatable.progress },
+                        modifier = Modifier
+                            .padding(end = 4.dp)
+                            .size(32.dp)
+                            .clickable(onClick = {
+                                if (animatable.isPlaying) {
+                                    return@clickable
+                                }
+                                scope.launch {
+                                    animatable.animate(composition)
+                                }
+                            })
+                    )
+                    Text(
+                        text = "Meteocons",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
+
+            HorizontalDivider()
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)
+            ) {
+                Text(
+                    text = "Weather",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.weight(1f)
+                )
+
+                TextButton(
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW, "https://github.com/breezy-weather/breezy-weather".toUri())
+                        context.startActivity(intent)
+                    }
+                ) {
+                    Text(
+                        text = "Breezy",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
+        }
+    }
+}

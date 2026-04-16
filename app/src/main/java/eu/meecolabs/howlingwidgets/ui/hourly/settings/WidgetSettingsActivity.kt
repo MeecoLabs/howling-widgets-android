@@ -7,8 +7,16 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.Surface
 import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.ui.NavDisplay
+import eu.meecolabs.howlingwidgets.ui.appinfo.AppInfoDestination
+import eu.meecolabs.howlingwidgets.ui.appinfo.AppInfoScreen
 import eu.meecolabs.howlingwidgets.ui.theme.AppTheme
 
 val appWidgetIdKey = ActionParameters.Key<Int>(AppWidgetManager.EXTRA_APPWIDGET_ID)
@@ -31,13 +39,39 @@ class WidgetSettingsActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
+            val backStack = rememberNavBackStack(SettingsDestination)
+
             AppTheme {
-                HourlySettingsScreen(
-                    glanceId,
-                    onDismiss = {
-                        dismiss(appWidgetId)
-                    }
-                )
+                Surface {
+                    NavDisplay(
+                        entryDecorators = listOf(
+                            rememberSaveableStateHolderNavEntryDecorator(),
+                            rememberViewModelStoreNavEntryDecorator()
+                        ),
+                        backStack = backStack,
+                        entryProvider = entryProvider {
+                            entry<SettingsDestination> {
+                                SettingsScreen(
+                                    glanceId,
+                                    onShowAppInfo = {
+                                        backStack.add(AppInfoDestination)
+                                    },
+                                    onDismiss = {
+                                        dismiss(appWidgetId)
+                                    }
+                                )
+                            }
+
+                            entry<AppInfoDestination> {
+                                AppInfoScreen(
+                                    onDismiss = {
+                                        backStack.removeLastOrNull()
+                                    }
+                                )
+                            }
+                        }
+                    )
+                }
             }
         }
     }

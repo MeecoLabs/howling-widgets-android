@@ -71,6 +71,12 @@ dependencies {
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.serialization.json)
 
+    // Navigation 3
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
+    implementation(libs.kotlinx.serialization.core)
+
     // Work Manager
     implementation(libs.androidx.work.runtime.ktx)
     androidTestImplementation(libs.androidx.work.testing)
@@ -85,6 +91,9 @@ dependencies {
     implementation(libs.koin.annotations)
     implementation(libs.insert.koin.koin.android)
     implementation(libs.koin.androidx.workmanager)
+
+    // Lottie
+    implementation(libs.lottie.compose)
 
     // Unit testing
     testImplementation(libs.junit)

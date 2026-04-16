@@ -9,6 +9,7 @@ junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 appcompat = "1.7.1"
 lifecycleViewmodelCompose = "2.10.0"
+lottieCompose = "6.7.1"
 material = "1.13.0"
 kotlin = "2.3.20"
 composeBom = "2026.03.01"
@@ -17,6 +18,8 @@ koin-bom = "4.2.1"
 koinPlugin = "0.6.2"
 kotlinSerialization = "2.3.20"
 workManager = "2.11.2"
+nav3Core = "1.1.0"
+lifecycleViewmodelNav3 = "2.11.0-alpha03"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
@@ -38,6 +41,7 @@ androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersi
 androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
 koin-androidx-workmanager = { module = "io.insert-koin:koin-androidx-workmanager" }
+lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottieCompose" }
 material = { module = "com.google.android.material:material", version.ref = "material" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerialization" }
@@ -49,6 +53,10 @@ koin-annotations = { module = "io.insert-koin:koin-annotations"}
 koin-compose-navigation3 = { module = "io.insert-koin:koin-compose-navigation3" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
 koin-compose = { module = "io.insert-koin:koin-compose" }
+androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
+androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3Core" }
+androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
