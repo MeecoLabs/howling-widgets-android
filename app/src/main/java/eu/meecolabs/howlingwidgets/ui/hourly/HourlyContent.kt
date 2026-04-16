@@ -1,5 +1,6 @@
 package eu.meecolabs.howlingwidgets.ui.hourly
 
+import android.appwidget.AppWidgetManager
 import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
@@ -12,8 +13,6 @@ import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.LocalSize
-import androidx.glance.action.actionParametersOf
-import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidgetManager
@@ -38,7 +37,6 @@ import eu.meecolabs.howlingwidgets.breezy.BreezyRepository
 import eu.meecolabs.howlingwidgets.models.WeatherState
 import eu.meecolabs.howlingwidgets.models.WidgetLocation
 import eu.meecolabs.howlingwidgets.ui.hourly.settings.WidgetSettingsActivity
-import eu.meecolabs.howlingwidgets.ui.hourly.settings.appWidgetIdKey
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -62,7 +60,7 @@ fun HourlyContent(
     val startBreezyAction = context.packageManager.getLaunchIntentForPackage(BreezyRepository.PACKAGE_NAME)?.apply {
         action = BreezyRepository.ACTION_SHOW_DAILY_FORECAST
         putExtra(BreezyRepository.KEY_MAIN_ACTIVITY_LOCATION_FORMATTED_ID, location.id)
-        setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
     }?.let { intent ->
         androidx.glance.appwidget.action.actionStartActivity(intent)
     }
@@ -115,8 +113,11 @@ fun HourlyContent(
                     .padding(start = 4.dp)
                     .size(18.dp)
                     .clickable(
-                        actionStartActivity<WidgetSettingsActivity>(
-                            actionParametersOf(appWidgetIdKey to appWidgetId)
+                        androidx.glance.appwidget.action.actionStartActivity(
+                            Intent(context, WidgetSettingsActivity::class.java).apply {
+                                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            }
                         )
                     )
             )
