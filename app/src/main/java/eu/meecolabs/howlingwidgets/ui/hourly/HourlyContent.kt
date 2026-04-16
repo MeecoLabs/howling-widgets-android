@@ -23,10 +23,12 @@ import androidx.glance.layout.Column
 import androidx.glance.layout.ContentScale
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
+import androidx.glance.layout.fillMaxHeight
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
+import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
@@ -190,11 +192,38 @@ fun HourlyContent(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = modifier
                     ) {
-                        hourly.forEach {
+                        hourly.forEachIndexed { index, forecast ->
+                            val date = Instant.ofEpochMilli(forecast.date).atZone(ZoneId.systemDefault())
                             HourlyItem(
-                                forecast = it,
+                                forecast = forecast,
                                 modifier = GlanceModifier.defaultWeight()
                             )
+
+                            if (index + 1 != HOURLY_ITEMS && date.hour == 23) {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = GlanceModifier
+                                        .fillMaxHeight()
+                                        .padding(vertical = 4.dp)
+                                ) {
+                                    Spacer(
+                                        modifier = GlanceModifier
+                                            .width(1.dp)
+                                            .fillMaxHeight()
+                                            .background(GlanceTheme.colors.outline)
+                                    )
+
+                                    Text(
+                                        text = DateTimeFormatter.ofPattern("eee").format(date.plusHours(1)),
+                                        style = TextStyle(
+                                            color = GlanceTheme.colors.onBackground
+                                        ),
+                                        modifier = GlanceModifier
+                                            .background(GlanceTheme.colors.background)
+                                            .padding(vertical = 4.dp)
+                                    )
+                                }
+                            }
                         }
                     }
                 }
