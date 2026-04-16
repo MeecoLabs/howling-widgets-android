@@ -11,6 +11,7 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.LocalSize
 import androidx.glance.action.actionParametersOf
 import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
@@ -44,8 +45,6 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.time.temporal.ChronoUnit
 
-private const val HOURLY_ITEMS = 5
-
 @Composable
 fun HourlyContent(
     glanceId: GlanceId,
@@ -55,12 +54,28 @@ fun HourlyContent(
     val context = LocalContext.current
     val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(glanceId)
 
+    val size = LocalSize.current
+    val itemCount = (size.width / 72.dp).toInt()
+
     val now = Instant.now().atZone(ZoneId.systemDefault())
+
+    val startBreezyAction = context.packageManager.getLaunchIntentForPackage(BreezyRepository.PACKAGE_NAME)?.apply {
+        action = BreezyRepository.ACTION_SHOW_DAILY_FORECAST
+        putExtra(BreezyRepository.KEY_MAIN_ACTIVITY_LOCATION_FORMATTED_ID, location.id)
+        setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }?.let { intent ->
+        androidx.glance.appwidget.action.actionStartActivity(intent)
+    }
+    val modifier = if (startBreezyAction == null) {
+        GlanceModifier
+    } else {
+        GlanceModifier.clickable(startBreezyAction)
+    }
 
     Column(
         verticalAlignment = Alignment.Top,
         horizontalAlignment = Alignment.Start,
-        modifier = GlanceModifier
+        modifier = modifier
             .fillMaxSize()
             .background(GlanceTheme.colors.background)
             .padding(8.dp)
@@ -131,19 +146,6 @@ fun HourlyContent(
             }
         }
 
-        val startBreezyAction = context.packageManager.getLaunchIntentForPackage(BreezyRepository.PACKAGE_NAME)?.apply {
-            action = BreezyRepository.ACTION_SHOW_DAILY_FORECAST
-            putExtra(BreezyRepository.KEY_MAIN_ACTIVITY_LOCATION_FORMATTED_ID, location.id)
-            setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }?.let { intent ->
-            androidx.glance.appwidget.action.actionStartActivity(intent)
-        }
-        val modifier = if (startBreezyAction == null) {
-            GlanceModifier.fillMaxSize()
-        } else {
-            GlanceModifier.fillMaxSize().clickable(startBreezyAction)
-        }
-
         when (state) {
             is WeatherState.Loading -> {
                 Box(
@@ -157,7 +159,7 @@ fun HourlyContent(
             is WeatherState.Error -> {
                 Box(
                     contentAlignment = Alignment.Center,
-                    modifier = modifier
+                    modifier = GlanceModifier.fillMaxSize()
                 ) {
                     Text(
                         text = "Failed to retrieve weather data!",
@@ -173,11 +175,11 @@ fun HourlyContent(
                 val hourly = state.weather.hourly
                     ?.filter { it.date > nowMs }
                     ?.sortedBy { it.date }
-                    ?.take(HOURLY_ITEMS)
+                    ?.take(itemCount)
                 if (hourly.isNullOrEmpty()) {
                     Box(
                         contentAlignment = Alignment.Center,
-                        modifier = modifier
+                        modifier = GlanceModifier.fillMaxSize()
                     ) {
                         Text(
                             text = "Sorry, weather data is missing!",
@@ -190,7 +192,7 @@ fun HourlyContent(
                     Row(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = modifier
+                        modifier = GlanceModifier.fillMaxSize()
                     ) {
                         hourly.forEachIndexed { index, forecast ->
                             val date = Instant.ofEpochMilli(forecast.date).atZone(ZoneId.systemDefault())
@@ -199,7 +201,7 @@ fun HourlyContent(
                                 modifier = GlanceModifier.defaultWeight()
                             )
 
-                            if (index + 1 != HOURLY_ITEMS && date.hour == 23) {
+                            if (index + 1 != itemCount && date.hour == 23) {
                                 Box(
                                     contentAlignment = Alignment.Center,
                                     modifier = GlanceModifier
