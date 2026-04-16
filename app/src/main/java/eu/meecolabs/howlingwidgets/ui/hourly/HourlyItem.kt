@@ -21,6 +21,7 @@ import org.breezyweather.datasharing.json.BreezyHourly
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 @Composable
 fun HourlyItem(
@@ -28,7 +29,7 @@ fun HourlyItem(
     modifier: GlanceModifier = GlanceModifier
 ) {
     val date = Instant.ofEpochMilli(forecast.date).atZone(ZoneId.systemDefault())
-    val time = DateTimeFormatter.ofPattern("HH:mm").format(date)
+    val time = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).format(date)
 
     val weatherCode = WeatherCode.getInstance(forecast.weatherCode)
     val weatherIcon = if (!forecast.isDaylight) {
