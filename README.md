@@ -22,5 +22,8 @@ https://meteocons.com
 
 ## TODOs
 
+- Open the widget settings as a new task, basically replacing the current app, so that it will not behave weirdly.
+- Open breezy as a new task or something so it does not behave weirdly.
+- Improve settings UIs when permissions etc. are missing.
 - Update the data sharing library once they released the bug PR I submitted.
 - Check that the current location works with Breezy update released.
