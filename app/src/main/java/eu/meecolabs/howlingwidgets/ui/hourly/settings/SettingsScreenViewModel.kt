@@ -136,7 +136,7 @@ class SettingsScreenViewModel(
             .setNextScheduleTimeOverride(next.toEpochSecond() * 1000)
             .setInputData(workDataOf(HourlyWidgetUpdateWorkerTask.APP_WIDGET_ID_KEY to appWidgetId))
             .build()
-        workManager.enqueueUniquePeriodicWork(HourlyUIUpdaterWorkerTask.TASK_NAME, ExistingPeriodicWorkPolicy.REPLACE, hourlyWidgetUpdateRequest)
+        workManager.enqueueUniquePeriodicWork(HourlyUIUpdaterWorkerTask.TASK_NAME, ExistingPeriodicWorkPolicy.UPDATE, hourlyWidgetUpdateRequest)
 
         dismiss()
     }
