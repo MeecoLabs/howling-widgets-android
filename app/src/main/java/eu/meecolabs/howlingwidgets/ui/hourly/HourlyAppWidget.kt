@@ -17,6 +17,7 @@ import eu.meecolabs.howlingwidgets.ui.hourly.settings.locationPrefKey
 import eu.meecolabs.howlingwidgets.ui.hourly.settings.weatherPrefKey
 import eu.meecolabs.howlingwidgets.ui.invalid.InvalidContent
 import eu.meecolabs.howlingwidgets.ui.theme.WidgetTheme
+import eu.meecolabs.howlingwidgets.worker.HourlyUIUpdaterWorkerTask
 import eu.meecolabs.howlingwidgets.worker.HourlyWidgetUpdateWorkerTask
 import kotlinx.serialization.json.Json
 
@@ -43,10 +44,22 @@ class HourlyAppWidget : GlanceAppWidget() {
         }
     }
 
+    override fun onCompositionError(context: Context, glanceId: GlanceId, appWidgetId: Int, throwable: Throwable) {
+        super.onCompositionError(context, glanceId, appWidgetId, throwable)
+
+        println("onCompositionError $appWidgetId = $throwable")
+    }
+
     override suspend fun onDelete(context: Context, glanceId: GlanceId) {
-        val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(glanceId)
-        WorkManager.getInstance(context)
-            .cancelAllWorkByTag(HourlyWidgetUpdateWorkerTask.workTag(appWidgetId))
+        val glanceManager = GlanceAppWidgetManager(context)
+        val workManager = WorkManager.getInstance(context)
+
+        val appWidgetId = glanceManager.getAppWidgetId(glanceId)
+        workManager.cancelAllWorkByTag(HourlyWidgetUpdateWorkerTask.workTag(appWidgetId))
+
+        if (glanceManager.getGlanceIds(HourlyAppWidget::class.java).size - 1 <= 0) {
+            workManager.cancelUniqueWork(HourlyUIUpdaterWorkerTask.TASK_NAME)
+        }
 
         super.onDelete(context, glanceId)
     }

@@ -13,6 +13,7 @@ import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -21,6 +22,7 @@ import eu.meecolabs.howlingwidgets.breezy.BreezyRepository
 import eu.meecolabs.howlingwidgets.models.Version
 import eu.meecolabs.howlingwidgets.models.WeatherState
 import eu.meecolabs.howlingwidgets.models.WidgetLocation
+import eu.meecolabs.howlingwidgets.worker.HourlyUIUpdaterWorkerTask
 import eu.meecolabs.howlingwidgets.worker.HourlyWidgetUpdateWorkerTask
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -121,20 +123,20 @@ class SettingsScreenViewModel(
         val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(glanceId)
         val taskTag = HourlyWidgetUpdateWorkerTask.workTag(appWidgetId)
 
+        val workManager = WorkManager.getInstance(context)
+
         val workRequest = OneTimeWorkRequestBuilder<HourlyWidgetUpdateWorkerTask>()
             .setInputData(workDataOf(HourlyWidgetUpdateWorkerTask.APP_WIDGET_ID_KEY to appWidgetId))
             .addTag(taskTag)
             .build()
+        workManager.enqueue(workRequest)
 
         val next = Instant.now().atZone(ZoneId.systemDefault()).truncatedTo(ChronoUnit.HOURS).plusHours(1)
         val hourlyWidgetUpdateRequest = PeriodicWorkRequestBuilder<HourlyWidgetUpdateWorkerTask>(Duration.ofHours(1))
             .setNextScheduleTimeOverride(next.toEpochSecond() * 1000)
             .setInputData(workDataOf(HourlyWidgetUpdateWorkerTask.APP_WIDGET_ID_KEY to appWidgetId))
-            .addTag(taskTag)
             .build()
-
-        WorkManager.getInstance(context)
-            .enqueue(listOf(workRequest, hourlyWidgetUpdateRequest))
+        workManager.enqueueUniquePeriodicWork(HourlyUIUpdaterWorkerTask.TASK_NAME, ExistingPeriodicWorkPolicy.REPLACE, hourlyWidgetUpdateRequest)
 
         dismiss()
     }
