@@ -45,7 +45,7 @@ fun HourlyItem(
     val temperature = if (temperatureInfo?.value != null && temperatureInfo.unit != null) {
         val unit = TemperatureUnit.getInstance(temperatureInfo.unit)?.unit
             ?: "?"
-        "%.0f %s".format(temperatureInfo.value, unit)
+        "%.0f%s".format(temperatureInfo.value, unit)
     } else {
         "???"
     }
