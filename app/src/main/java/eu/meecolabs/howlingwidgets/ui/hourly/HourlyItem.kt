@@ -10,6 +10,7 @@ import androidx.glance.ImageProvider
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
 import androidx.glance.layout.ContentScale
+import androidx.glance.layout.Row
 import androidx.glance.layout.padding
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
@@ -49,6 +50,10 @@ fun HourlyItem(
         "???"
     }
 
+    val precipitationProbability = forecast.precipitationProbability?.total?.value?.let {
+        "%.0f%%".format(it)
+    }
+
     Column(
         verticalAlignment = Alignment.Vertical.CenterVertically,
         horizontalAlignment = Alignment.Horizontal.CenterHorizontally,
@@ -69,15 +74,31 @@ fun HourlyItem(
                 .padding(vertical = 4.dp)
                 .defaultWeight()
         )
-        Text(
-            text = temperature,
-            style = TextStyle(
-                fontSize = 13.sp,
-                fontWeight = FontWeight.Medium,
-                color = GlanceTheme.colors.onBackground
-            ),
+        Row(
+            verticalAlignment = Alignment.Bottom,
             modifier = GlanceModifier
                 .padding(bottom = 2.dp)
-        )
+        ) {
+            Text(
+                text = temperature,
+                style = TextStyle(
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = GlanceTheme.colors.onBackground
+                )
+            )
+
+            if (precipitationProbability != null) {
+                Text(
+                    text = precipitationProbability,
+                    style = TextStyle(
+                        fontSize = 10.sp,
+                        color = GlanceTheme.colors.primary
+                    ),
+                    modifier = GlanceModifier
+                        .padding(start = 4.dp)
+                )
+            }
+        }
     }
 }
