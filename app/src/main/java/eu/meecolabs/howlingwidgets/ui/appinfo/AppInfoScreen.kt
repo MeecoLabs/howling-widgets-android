@@ -48,14 +48,14 @@ data object AppInfoDestination : NavKey
 fun AppInfoScreen(
     onDismiss: (() -> Unit)? = null
 ) {
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.clear_day))
-    val animatable = rememberLottieAnimatable()
+    val meteoconsComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.meteocons))
+    val meteoconsAnimatable = rememberLottieAnimatable()
 
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    LaunchedEffect(animatable) {
-        animatable.animate(composition)
+    LaunchedEffect(meteoconsAnimatable) {
+        meteoconsAnimatable.animate(meteoconsComposition)
     }
 
     Scaffold(
@@ -115,6 +115,49 @@ fun AppInfoScreen(
                     .padding(12.dp)
             ) {
                 Text(
+                    text = "Logo",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.weight(1f)
+                )
+
+                TextButton(
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW, "https://meteocons.com/icons/?style=fill&icon=umbrella-wind-alt".toUri())
+                        context.startActivity(intent)
+                    }
+                ) {
+                    LottieAnimation(
+                        composition = meteoconsComposition,
+                        progress = { meteoconsAnimatable.progress },
+                        modifier = Modifier
+                            .padding(end = 4.dp)
+                            .size(32.dp)
+                            .clickable(onClick = {
+                                if (meteoconsAnimatable.isPlaying) {
+                                    return@clickable
+                                }
+                                scope.launch {
+                                    meteoconsAnimatable.animate(meteoconsComposition)
+                                }
+                            })
+                    )
+                    Text(
+                        text = "Meteocons",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
+
+            HorizontalDivider()
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)
+            ) {
+                Text(
                     text = "Icons",
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.weight(1f)
@@ -122,27 +165,12 @@ fun AppInfoScreen(
 
                 TextButton(
                     onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW, "https://meteocons.com".toUri())
+                        val intent = Intent(Intent.ACTION_VIEW, "https://github.com/Grabstertv/WeatherNowIcons".toUri())
                         context.startActivity(intent)
                     }
                 ) {
-                    LottieAnimation(
-                        composition,
-                        progress = { animatable.progress },
-                        modifier = Modifier
-                            .padding(end = 4.dp)
-                            .size(32.dp)
-                            .clickable(onClick = {
-                                if (animatable.isPlaying) {
-                                    return@clickable
-                                }
-                                scope.launch {
-                                    animatable.animate(composition)
-                                }
-                            })
-                    )
                     Text(
-                        text = "Meteocons",
+                        text = "Weather Now",
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }

@@ -13,13 +13,13 @@ enum class WeatherCode(
     CLOUDY("cloudy", R.drawable.cloudy),
     RAIN("rain", R.drawable.overcast_rain),
     SNOW("snow", R.drawable.snow),
-    WIND("wind", R.drawable.wind),
-    FOG("fog", R.drawable.fog_day, R.drawable.fog_night),
+    WIND("wind", R.drawable.windy),
+    FOG("fog", R.drawable.fog),
     HAZE("haze", R.drawable.haze_day, R.drawable.haze_night),
     SLEET("sleet", R.drawable.sleet),
     HAIL("hail", R.drawable.hail),
-    THUNDER("thunder", R.drawable.thunderstorms),
-    THUNDERSTORM("thunderstorm", R.drawable.thunderstorms_rain);
+    THUNDER("thunder", R.drawable.thunderstorm),
+    THUNDERSTORM("thunderstorm", R.drawable.thunderstorm_rain);
 
     companion object {
         fun getInstance(value: String?): WeatherCode? = WeatherCode.entries.firstOrNull {
