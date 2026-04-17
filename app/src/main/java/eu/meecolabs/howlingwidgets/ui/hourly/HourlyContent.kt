@@ -76,14 +76,21 @@ fun HourlyContent(
         modifier = modifier
             .fillMaxSize()
             .background(GlanceTheme.colors.background)
-            .padding(8.dp)
+            .padding(horizontal = 8.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = GlanceModifier
                 .fillMaxWidth()
-                .padding(horizontal = 4.dp)
-                .padding(start = 4.dp, bottom = 4.dp)
+                .padding(vertical = 4.dp, horizontal = 8.dp)
+                .clickable(
+                    androidx.glance.appwidget.action.actionStartActivity(
+                        Intent(context, WidgetSettingsActivity::class.java).apply {
+                            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        }
+                    )
+                )
         ) {
             if (location.isCurrentPosition) {
                 Image(
@@ -112,14 +119,6 @@ fun HourlyContent(
                 modifier = GlanceModifier
                     .padding(start = 4.dp)
                     .size(18.dp)
-                    .clickable(
-                        androidx.glance.appwidget.action.actionStartActivity(
-                            Intent(context, WidgetSettingsActivity::class.java).apply {
-                                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            }
-                        )
-                    )
             )
 
 
