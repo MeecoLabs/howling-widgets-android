@@ -53,7 +53,7 @@ fun HourlyContent(
     val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(glanceId)
 
     val size = LocalSize.current
-    val itemCount = (size.width / 72.dp).toInt()
+    val itemCount = ((size.width - 8.dp) / 72.dp).toInt().coerceAtLeast(1)
 
     val now = Instant.now().atZone(ZoneId.systemDefault())
 
