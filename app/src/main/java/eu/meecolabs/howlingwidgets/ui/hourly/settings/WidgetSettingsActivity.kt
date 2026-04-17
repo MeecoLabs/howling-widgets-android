@@ -61,6 +61,7 @@ class WidgetSettingsActivity : ComponentActivity() {
 
                             entry<AppInfoDestination> {
                                 AppInfoScreen(
+                                    showPinRequest = false,
                                     onDismiss = {
                                         backStack.removeLastOrNull()
                                     }

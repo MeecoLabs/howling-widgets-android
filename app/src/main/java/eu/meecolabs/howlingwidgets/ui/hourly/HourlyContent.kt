@@ -43,6 +43,8 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.time.temporal.ChronoUnit
 
+private const val MAXIMUM_ITEMS = 5
+
 @Composable
 fun HourlyContent(
     glanceId: GlanceId,
@@ -53,7 +55,7 @@ fun HourlyContent(
     val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(glanceId)
 
     val size = LocalSize.current
-    val itemCount = ((size.width - 8.dp) / 72.dp).toInt().coerceAtLeast(1)
+    val itemCount = ((size.width - 8.dp) / 72.dp).toInt().coerceIn(1, MAXIMUM_ITEMS)
 
     val now = Instant.now().atZone(ZoneId.systemDefault())
 

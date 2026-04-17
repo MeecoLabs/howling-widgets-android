@@ -16,7 +16,9 @@ class AppInfoActivity : ComponentActivity() {
         setContent {
             AppTheme {
                 Surface {
-                    AppInfoScreen()
+                    AppInfoScreen(
+                        showPinRequest = true
+                    )
                 }
             }
         }

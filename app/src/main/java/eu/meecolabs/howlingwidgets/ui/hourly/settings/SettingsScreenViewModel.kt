@@ -22,6 +22,7 @@ import eu.meecolabs.howlingwidgets.breezy.BreezyRepository
 import eu.meecolabs.howlingwidgets.models.Version
 import eu.meecolabs.howlingwidgets.models.WeatherState
 import eu.meecolabs.howlingwidgets.models.WidgetLocation
+import eu.meecolabs.howlingwidgets.ui.hourly.HourlyAppWidget
 import eu.meecolabs.howlingwidgets.worker.HourlyUIUpdaterWorkerTask
 import eu.meecolabs.howlingwidgets.worker.HourlyWidgetUpdateWorkerTask
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -119,6 +120,7 @@ class SettingsScreenViewModel(
             prefs[stringPreferencesKey(locationPrefKey)] = Json.encodeToString(location)
             prefs[stringPreferencesKey(weatherPrefKey)] = Json.encodeToString<WeatherState>(WeatherState.Loading)
         }
+        HourlyAppWidget().update(context, glanceId)
 
         val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(glanceId)
         val taskTag = HourlyWidgetUpdateWorkerTask.workTag(appWidgetId)

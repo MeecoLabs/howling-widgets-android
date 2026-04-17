@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -51,6 +52,7 @@ data object AppInfoDestination : NavKey
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppInfoScreen(
+    showPinRequest: Boolean,
     onDismiss: (() -> Unit)? = null,
     viewModel: AppInfoScreenViewModel = koinViewModel()
 ) {
@@ -284,6 +286,17 @@ fun AppInfoScreen(
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
+            }
+
+            HorizontalDivider()
+
+            Button(
+                onClick = {
+                    viewModel.requestAddWidget(context)
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Text(text = "Add widget to home screen")
             }
         }
     }

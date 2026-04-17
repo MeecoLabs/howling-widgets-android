@@ -30,8 +30,10 @@ class HourlyAppWidget : GlanceAppWidget() {
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
             val prefs = currentState<Preferences>()
-            val location: WidgetLocation? = prefs[stringPreferencesKey(locationPrefKey)]?.let { Json.decodeFromString(it) }
-            val state: WeatherState? = prefs[stringPreferencesKey(weatherPrefKey)]?.let { Json.decodeFromString<WeatherState>(it) }
+            val location: WidgetLocation? =
+                prefs[stringPreferencesKey(locationPrefKey)]?.let { Json.decodeFromString(it) }
+            val state: WeatherState? =
+                prefs[stringPreferencesKey(weatherPrefKey)]?.let { Json.decodeFromString<WeatherState>(it) }
 
             WidgetTheme {
                 if (location == null || state == null) {
