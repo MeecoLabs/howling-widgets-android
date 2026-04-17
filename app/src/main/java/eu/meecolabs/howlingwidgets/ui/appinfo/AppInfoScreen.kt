@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -27,17 +28,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieAnimatable
 import com.airbnb.lottie.compose.rememberLottieComposition
+import eu.meecolabs.appupdates.AppUpdateRepository
 import eu.meecolabs.howlingwidgets.BuildConfig
 import eu.meecolabs.howlingwidgets.R
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import org.koin.compose.viewmodel.koinViewModel
 
 
 @Serializable
@@ -46,8 +51,11 @@ data object AppInfoDestination : NavKey
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppInfoScreen(
-    onDismiss: (() -> Unit)? = null
+    onDismiss: (() -> Unit)? = null,
+    viewModel: AppInfoScreenViewModel = koinViewModel()
 ) {
+    val appUpdate by viewModel.appUpdate.collectAsStateWithLifecycle()
+
     val meteoconsComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.meteocons))
     val meteoconsAnimatable = rememberLottieAnimatable()
 
@@ -87,22 +95,96 @@ fun AppInfoScreen(
                 .padding(innerPadding)
         ) {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
+                    .clickable(onClick = {
+                        when (appUpdate) {
+                            is AppUpdateRepository.State.UpdatesAvailable -> {
+                                viewModel.openFDroid(context)
+                            }
+
+                            is AppUpdateRepository.State.Checking -> {}
+
+                            else -> {
+                                viewModel.checkForUpdates()
+                            }
+                        }
+                    })
                     .padding(12.dp)
             ) {
                 Text(
                     text = "App Version",
                     style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(end = 8.dp)
                 )
 
-                Text(
-                    text = "${BuildConfig.VERSION_NAME}-b${BuildConfig.VERSION_CODE}",
-                    style = MaterialTheme.typography.bodyLarge
-                )
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = "${BuildConfig.VERSION_NAME}-b${BuildConfig.VERSION_CODE}",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+
+                    when (val state = appUpdate) {
+                        is AppUpdateRepository.State.Idle -> {
+                            Text(
+                                text = "Check for updates…",
+                                fontWeight = FontWeight.Light,
+                                color = MaterialTheme.colorScheme.primary,
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
+
+                        is AppUpdateRepository.State.Checking -> {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                CircularProgressIndicator(
+                                    strokeWidth = 2.dp,
+                                    modifier = Modifier
+                                        .padding(end = 8.dp)
+                                        .size(16.dp)
+                                )
+
+                                Text(
+                                    text = "Checking…",
+                                    fontWeight = FontWeight.Light,
+                                    style = MaterialTheme.typography.labelSmall
+                                )
+                            }
+                        }
+
+                        is AppUpdateRepository.State.Failure -> {
+                            Text(
+                                text = "Could not check for updates!",
+                                fontWeight = FontWeight.Light,
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
+
+                        is AppUpdateRepository.State.NoUpdatesAvailable -> {
+                            Text(
+                                text = "You are on the latest version!",
+                                fontWeight = FontWeight.Light,
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
+
+                        is AppUpdateRepository.State.UpdatesAvailable -> {
+                            Text(
+                                text = "New version ${state.update.versionName} available!",
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary,
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
+                    }
+                }
             }
 
             HorizontalDivider()

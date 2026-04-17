@@ -1,5 +1,6 @@
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -7,6 +8,9 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.serialization)
     alias(libs.plugins.koin.compiler)
 }
+
+val configProperties = Properties()
+project.file("config.properties").inputStream().use { configProperties.load(it) }
 
 android {
     namespace = "eu.meecolabs.howlingwidgets"
@@ -24,6 +28,17 @@ android {
         versionName = SimpleDateFormat("yyyy.MM.dd").format(Date())
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        //noinspection WrongGradleMethod
+        configProperties.forEach { (key, value) ->
+            val propertyKey = key.toString()
+            if (propertyKey.matches(Regex("[a-zA-Z_][a-zA-Z0-9_]*"))) {
+                val propertyValue = value.toString().replace("\"", "\\\"")
+                buildConfigField("String", propertyKey, "\"$propertyValue\"")
+            } else {
+                throw Exception("Warning: Property key '$propertyKey' from settings.properties is not a valid Java identifier. Skipping BuildConfig field generation for this key.")
+            }
+        }
     }
 
     buildTypes {
@@ -94,6 +109,9 @@ dependencies {
 
     // Lottie
     implementation(libs.lottie.compose)
+
+    // App Updates
+    implementation(libs.app.updates)
 
     // Unit testing
     testImplementation(libs.junit)
