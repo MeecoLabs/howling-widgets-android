@@ -46,7 +46,7 @@ class HowlingAppWidgetReceiver : GlanceAppWidgetReceiver() {
         val workRequests = glanceManager.getGlanceIds(HourlyAppWidget::class.java)
             .map { glanceId ->
                 updateAppWidgetState(context, glanceId) { prefs ->
-                    prefs[stringPreferencesKey(weatherPrefKey)] = Json.encodeToString(WeatherState.Loading)
+                    prefs[stringPreferencesKey(weatherPrefKey)] = Json.encodeToString<WeatherState>(WeatherState.Loading)
                 }
 
                 val appWidgetId = glanceManager.getAppWidgetId(glanceId)

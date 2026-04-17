@@ -65,7 +65,7 @@ class HourlyWidgetUpdateWorkerTask(
 
         updateAppWidgetState(context, glanceId) { prefs ->
             prefs[stringPreferencesKey(locationPrefKey)] = Json.encodeToString(updatedLocation)
-            prefs[stringPreferencesKey(weatherPrefKey)] = Json.encodeToString(newState)
+            prefs[stringPreferencesKey(weatherPrefKey)] = Json.encodeToString<WeatherState>(newState)
         }
         HourlyAppWidget().update(context, glanceId)
     }

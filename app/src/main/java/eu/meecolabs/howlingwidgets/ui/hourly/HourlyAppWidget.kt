@@ -31,7 +31,7 @@ class HourlyAppWidget : GlanceAppWidget() {
         provideContent {
             val prefs = currentState<Preferences>()
             val location: WidgetLocation? = prefs[stringPreferencesKey(locationPrefKey)]?.let { Json.decodeFromString(it) }
-            val state: WeatherState? = prefs[stringPreferencesKey(weatherPrefKey)]?.let { Json.decodeFromString(it) }
+            val state: WeatherState? = prefs[stringPreferencesKey(weatherPrefKey)]?.let { Json.decodeFromString<WeatherState>(it) }
 
             WidgetTheme {
                 if (location == null || state == null) {

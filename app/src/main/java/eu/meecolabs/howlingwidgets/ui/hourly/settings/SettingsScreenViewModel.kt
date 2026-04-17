@@ -117,7 +117,7 @@ class SettingsScreenViewModel(
 
         updateAppWidgetState(context, glanceId) { prefs ->
             prefs[stringPreferencesKey(locationPrefKey)] = Json.encodeToString(location)
-            prefs[stringPreferencesKey(weatherPrefKey)] = Json.encodeToString(WeatherState.Loading)
+            prefs[stringPreferencesKey(weatherPrefKey)] = Json.encodeToString<WeatherState>(WeatherState.Loading)
         }
 
         val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(glanceId)
