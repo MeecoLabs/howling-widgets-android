@@ -64,7 +64,7 @@ fun HourlyContent(
     val now = Instant.now().atZone(ZoneId.systemDefault())
 
     val startBreezyAction = context.packageManager.getLaunchIntentForPackage(BreezyRepository.PACKAGE_NAME)?.apply {
-        action = BreezyRepository.ACTION_SHOW_DAILY_FORECAST
+        action = BreezyRepository.ACTION_MAIN
         putExtra(BreezyRepository.KEY_MAIN_ACTIVITY_LOCATION_FORMATTED_ID, location.id)
         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
     }?.let { intent ->
