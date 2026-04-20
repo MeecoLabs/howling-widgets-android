@@ -83,7 +83,7 @@ fun SettingsScreen(
 
                 Button(
                     onClick = {
-                        // TODO
+                        viewModel.openFDroid(context)
                     }
                 ) {
                     Text(text = "Install in F-Droid")
@@ -160,12 +160,14 @@ fun SettingsScreen(
 
                     if (state.locations.isEmpty()) {
                         item {
-                            Column {
+                            Column(
+                                modifier = Modifier.padding(8.dp)
+                            ) {
                                 Text(text = "You have not set up any locations in Breezy Weather yet.")
 
                                 Button(
                                     onClick = {
-                                        // TODO
+                                        viewModel.openBreezy(context)
                                     }
                                 ) {
                                     Text(text = "Open Breezy")

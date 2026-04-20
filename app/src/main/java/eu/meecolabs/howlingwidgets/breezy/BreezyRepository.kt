@@ -17,6 +17,7 @@ class BreezyRepository {
     companion object {
         private val TAG = BreezyRepository::class.simpleName
 
+        @Suppress("SpellCheckingInspection")
         const val PACKAGE_NAME = "org.breezyweather"
 
         const val ACTION_UPDATE_NOTIFIER = "$PACKAGE_NAME.ACTION_UPDATE_NOTIFIER"
@@ -59,7 +60,7 @@ class BreezyRepository {
     fun getLocations(context: Context, limit: Int? = null): List<BreezyLocation> {
         val contentResolver = context.contentResolver
         val uri = if (limit != null && limit > 0) {
-            LOCATIONS_URI.buildUpon().appendQueryParameter("limit", limit.toString()).build();
+            LOCATIONS_URI.buildUpon().appendQueryParameter("limit", limit.toString()).build()
         } else {
             LOCATIONS_URI
         }

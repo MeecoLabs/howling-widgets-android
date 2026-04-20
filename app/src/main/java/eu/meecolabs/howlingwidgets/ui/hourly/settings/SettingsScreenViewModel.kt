@@ -1,9 +1,11 @@
 package eu.meecolabs.howlingwidgets.ui.hourly.settings
 
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.GlanceId
@@ -101,12 +103,33 @@ class SettingsScreenViewModel(
         }
     }
 
+    fun openFDroid(context: Context) {
+        try {
+            val intent =
+                Intent(Intent.ACTION_VIEW, "https://f-droid.org/packages/${BreezyRepository.PACKAGE_NAME}".toUri())
+            context.startActivity(intent)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            // TODO: show error
+        }
+    }
+
     fun requestPermission(launcher: ManagedActivityResultLauncher<String, Boolean>) {
         launcher.launch(BreezyRepository.READ_PERMISSION)
     }
 
     fun onPermissionResult(context: Context) {
         load(context)
+    }
+
+    fun openBreezy(context: Context) {
+        try {
+            val intent = context.packageManager.getLaunchIntentForPackage(BreezyRepository.PACKAGE_NAME)
+            context.startActivity(intent)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            // TODO: show error
+        }
     }
 
     fun selectLocation(location: BreezyLocation, context: Context, dismiss: () -> Unit) = viewModelScope.launch  {
