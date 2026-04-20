@@ -7,6 +7,8 @@ import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.action.Action
+import androidx.glance.action.clickable
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
 import androidx.glance.layout.ContentScale
@@ -16,6 +18,7 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import eu.meecolabs.howlingwidgets.R
+import eu.meecolabs.howlingwidgets.models.HourlyDisplaySettings
 import eu.meecolabs.howlingwidgets.models.TemperatureUnit
 import eu.meecolabs.howlingwidgets.models.WeatherCode
 import org.breezyweather.datasharing.json.BreezyHourly
@@ -27,6 +30,8 @@ import java.time.format.FormatStyle
 @Composable
 fun HourlyItem(
     forecast: BreezyHourly,
+    displaySettings: HourlyDisplaySettings?,
+    onChangePrecipitationDisplay: Action,
     modifier: GlanceModifier = GlanceModifier
 ) {
     val date = Instant.ofEpochMilli(forecast.date).atZone(ZoneId.systemDefault())
@@ -50,8 +55,14 @@ fun HourlyItem(
         "???"
     }
 
-    val precipitationProbability = forecast.precipitationProbability?.total?.value?.let {
-        "%.0f%%".format(it)
+    val precipitationInfo = if (displaySettings?.showPrecipitationAmount != true) {
+        forecast.precipitationProbability?.total?.value
+            ?.takeUnless { it < 1 }
+            ?.let { "%.0f%%".format(it) }
+    } else {
+        forecast.precipitation?.total?.value
+            ?.takeUnless { it < 0.1 }
+            ?.let { "%.0f".format(it) }
     }
 
     Column(
@@ -78,6 +89,7 @@ fun HourlyItem(
             verticalAlignment = Alignment.Bottom,
             modifier = GlanceModifier
                 .padding(bottom = 2.dp)
+                .clickable(onChangePrecipitationDisplay)
         ) {
             Text(
                 text = temperature,
@@ -88,9 +100,9 @@ fun HourlyItem(
                 )
             )
 
-            if (precipitationProbability != null) {
+            if (precipitationInfo != null) {
                 Text(
-                    text = precipitationProbability,
+                    text = precipitationInfo,
                     style = TextStyle(
                         fontSize = 10.sp,
                         color = GlanceTheme.colors.primary

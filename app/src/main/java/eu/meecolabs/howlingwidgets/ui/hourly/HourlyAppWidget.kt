@@ -12,8 +12,10 @@ import androidx.glance.currentState
 import androidx.glance.state.GlanceStateDefinition
 import androidx.glance.state.PreferencesGlanceStateDefinition
 import androidx.work.WorkManager
+import eu.meecolabs.howlingwidgets.models.HourlyDisplaySettings
 import eu.meecolabs.howlingwidgets.models.WeatherState
 import eu.meecolabs.howlingwidgets.models.WidgetLocation
+import eu.meecolabs.howlingwidgets.ui.hourly.settings.displaySettingsPrefKey
 import eu.meecolabs.howlingwidgets.ui.hourly.settings.locationPrefKey
 import eu.meecolabs.howlingwidgets.ui.hourly.settings.weatherPrefKey
 import eu.meecolabs.howlingwidgets.ui.invalid.InvalidContent
@@ -34,6 +36,8 @@ class HourlyAppWidget : GlanceAppWidget() {
                 prefs[stringPreferencesKey(locationPrefKey)]?.let { Json.decodeFromString(it) }
             val state: WeatherState? =
                 prefs[stringPreferencesKey(weatherPrefKey)]?.let { Json.decodeFromString<WeatherState>(it) }
+            val displaySettings: HourlyDisplaySettings? =
+                prefs[stringPreferencesKey(displaySettingsPrefKey)]?.let { Json.decodeFromString(it) }
 
             WidgetTheme {
                 if (location == null || state == null) {
@@ -42,7 +46,8 @@ class HourlyAppWidget : GlanceAppWidget() {
                     HourlyContent(
                         glanceId = id,
                         location = location,
-                        state = state
+                        state = state,
+                        displaySettings = displaySettings
                     )
                 }
             }

@@ -20,6 +20,7 @@ import eu.meecolabs.howlingwidgets.ui.theme.AppTheme
 
 const val locationPrefKey = "locationState"
 const val weatherPrefKey = "weatherState"
+const val displaySettingsPrefKey = "displaySettings"
 
 class WidgetSettingsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

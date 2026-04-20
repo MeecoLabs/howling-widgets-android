@@ -23,6 +23,7 @@ import eu.meecolabs.howlingwidgets.ui.hourly.settings.weatherPrefKey
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import org.breezyweather.datasharing.json.BreezyHourly
+import org.breezyweather.datasharing.json.BreezyPrecipitationProbability
 import org.breezyweather.datasharing.json.BreezyTemperature
 import org.breezyweather.datasharing.json.BreezyUnit
 import org.breezyweather.datasharing.json.BreezyWeather
@@ -73,12 +74,14 @@ class AppInfoScreenViewModel(
                     BreezyHourly(
                         now.plus(4, ChronoUnit.HOURS).toEpochMilli(),
                         weatherCode = WeatherCode.RAIN.id,
-                        temperature = BreezyTemperature(temperature = BreezyUnit(value = 14.0, unit = TemperatureUnit.CELSIUS.id))
+                        temperature = BreezyTemperature(temperature = BreezyUnit(value = 14.0, unit = TemperatureUnit.CELSIUS.id)),
+                        precipitationProbability = BreezyPrecipitationProbability(total = BreezyUnit(value = 50.0))
                     ),
                     BreezyHourly(
                         now.plus(5, ChronoUnit.HOURS).toEpochMilli(),
                         weatherCode = WeatherCode.THUNDERSTORM.id,
-                        temperature = BreezyTemperature(temperature = BreezyUnit(value = 12.0, unit = TemperatureUnit.CELSIUS.id))
+                        temperature = BreezyTemperature(temperature = BreezyUnit(value = 12.0, unit = TemperatureUnit.CELSIUS.id)),
+                        precipitationProbability = BreezyPrecipitationProbability(total = BreezyUnit(value = 50.0))
                     )
                 )
             )

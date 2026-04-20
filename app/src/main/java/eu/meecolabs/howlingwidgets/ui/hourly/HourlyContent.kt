@@ -16,6 +16,7 @@ import androidx.glance.LocalSize
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
@@ -34,8 +35,10 @@ import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import eu.meecolabs.howlingwidgets.R
 import eu.meecolabs.howlingwidgets.breezy.BreezyRepository
+import eu.meecolabs.howlingwidgets.models.HourlyDisplaySettings
 import eu.meecolabs.howlingwidgets.models.WeatherState
 import eu.meecolabs.howlingwidgets.models.WidgetLocation
+import eu.meecolabs.howlingwidgets.ui.hourly.actions.TogglePrecipitationDisplayAction
 import eu.meecolabs.howlingwidgets.ui.hourly.settings.WidgetSettingsActivity
 import java.time.Instant
 import java.time.ZoneId
@@ -49,7 +52,8 @@ private const val MAXIMUM_ITEMS = 5
 fun HourlyContent(
     glanceId: GlanceId,
     location: WidgetLocation,
-    state: WeatherState
+    state: WeatherState,
+    displaySettings: HourlyDisplaySettings?
 ) {
     val context = LocalContext.current
     val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(glanceId)
@@ -200,6 +204,8 @@ fun HourlyContent(
                             val date = Instant.ofEpochMilli(forecast.date).atZone(ZoneId.systemDefault())
                             HourlyItem(
                                 forecast = forecast,
+                                displaySettings = displaySettings,
+                                onChangePrecipitationDisplay = actionRunCallback<TogglePrecipitationDisplayAction>(),
                                 modifier = GlanceModifier.defaultWeight()
                             )
 
