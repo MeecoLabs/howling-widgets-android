@@ -2,14 +2,12 @@ package eu.meecolabs.howlingwidgets.breezy
 
 import android.content.Context
 import android.util.Log
-import androidx.core.database.getStringOrNull
 import androidx.core.net.toUri
 import eu.meecolabs.howlingwidgets.models.Version
 import eu.meecolabs.howlingwidgets.models.WeatherFilter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.breezyweather.datasharing.BreezyLocation
-import org.breezyweather.datasharing.provider.ProviderLocation
 import org.breezyweather.datasharing.provider.ProviderUri
 import org.breezyweather.datasharing.provider.ProviderVersion
 import org.koin.core.annotation.Single
@@ -80,8 +78,7 @@ class BreezyRepository {
                     return locations
                 }
                 while (cursor.moveToNext()) {
-                    val isCurrentPosition = cursor.getStringOrNull(cursor.getColumnIndexOrThrow(ProviderLocation.COLUMN_IS_CURRENT_POSITION)).toBoolean()
-                    locations.add(BreezyLocation.toBreezyLocation(cursor).copy(isCurrentPosition = isCurrentPosition))
+                    locations.add(BreezyLocation.toBreezyLocation(cursor))
                 }
             }
 
