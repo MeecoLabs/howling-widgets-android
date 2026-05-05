@@ -214,7 +214,7 @@ fun HourlyContent(
                                     contentAlignment = Alignment.Center,
                                     modifier = GlanceModifier
                                         .fillMaxHeight()
-                                        .padding(vertical = 4.dp)
+                                        .padding(vertical = 12.dp)
                                 ) {
                                     Spacer(
                                         modifier = GlanceModifier
@@ -226,6 +226,7 @@ fun HourlyContent(
                                     Text(
                                         text = DateTimeFormatter.ofPattern("eee").format(date.plusHours(1)),
                                         style = TextStyle(
+                                            fontSize = 10.sp,
                                             color = GlanceTheme.colors.onBackground
                                         ),
                                         modifier = GlanceModifier
