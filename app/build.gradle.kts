@@ -23,8 +23,7 @@ android {
     defaultConfig {
         applicationId = "eu.meecolabs.howlingwidgets"
         minSdk = 31
-        targetSdk = 36
-        versionCode = 5
+        versionCode = 6
         versionName = SimpleDateFormat("yyyy.MM.dd").format(Date())
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
