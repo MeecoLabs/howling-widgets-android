@@ -177,7 +177,7 @@ fun HourlyContent(
             }
 
             is WeatherState.Success -> {
-                val nowMs = now.toEpochSecond() * 1000
+                val nowMs = now.minus(30, ChronoUnit.MINUTES).toEpochSecond() * 1000
                 val hourly = state.weather.hourly
                     ?.filter { it.date > nowMs }
                     ?.sortedBy { it.date }

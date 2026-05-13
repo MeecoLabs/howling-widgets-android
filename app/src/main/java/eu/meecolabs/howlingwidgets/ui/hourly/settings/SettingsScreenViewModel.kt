@@ -156,8 +156,8 @@ class SettingsScreenViewModel(
             .build()
         workManager.enqueue(workRequest)
 
-        val next = Instant.now().atZone(ZoneId.systemDefault()).truncatedTo(ChronoUnit.HOURS).plusHours(1)
-        val hourlyWidgetUpdateRequest = PeriodicWorkRequestBuilder<HourlyWidgetUpdateWorkerTask>(Duration.ofHours(1))
+        val next = Instant.now().atZone(ZoneId.systemDefault()).truncatedTo(ChronoUnit.HOURS).plusMinutes(30)
+        val hourlyWidgetUpdateRequest = PeriodicWorkRequestBuilder<HourlyWidgetUpdateWorkerTask>(Duration.ofMinutes(30))
             .setNextScheduleTimeOverride(next.toEpochSecond() * 1000)
             .setInputData(workDataOf(HourlyWidgetUpdateWorkerTask.APP_WIDGET_ID_KEY to appWidgetId))
             .build()
