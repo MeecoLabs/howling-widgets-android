@@ -68,21 +68,22 @@ fun HourlyItem(
     Column(
         verticalAlignment = Alignment.Vertical.CenterVertically,
         horizontalAlignment = Alignment.Horizontal.CenterHorizontally,
-        modifier = modifier.padding(horizontal = 8.dp)
+        modifier = modifier.padding(horizontal = 4.dp)
     ) {
         Text(
             text = time,
             style = TextStyle(
                 fontSize = 10.sp,
                 color = GlanceTheme.colors.onBackground
-            )
+            ),
+            maxLines = 1
         )
         Image(
             provider = ImageProvider(weatherIcon),
             contentDescription = forecast.weatherCode ?: "Unknown",
             contentScale = ContentScale.Fit,
             modifier = GlanceModifier
-                .padding(vertical = 4.dp)
+                .padding(vertical = 2.dp)
                 .defaultWeight()
         )
         Row(
@@ -97,7 +98,8 @@ fun HourlyItem(
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Medium,
                     color = GlanceTheme.colors.onBackground
-                )
+                ),
+                maxLines = 1
             )
 
             if (precipitationInfo != null) {
@@ -107,8 +109,9 @@ fun HourlyItem(
                         fontSize = 10.sp,
                         color = GlanceTheme.colors.primary
                     ),
+                    maxLines = 1,
                     modifier = GlanceModifier
-                        .padding(start = 4.dp)
+                        .padding(start = 2.dp)
                 )
             }
         }
