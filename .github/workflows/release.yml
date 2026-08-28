@@ -1,0 +1,98 @@
+name: Release Android
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  Build:
+    name: 'Build APK'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout Code'
+        uses: actions/checkout@v7
+
+      - name: 'Setup JDK'
+        uses: actions/setup-java@v6
+        with:
+          java-version: 21
+          distribution: 'temurin'
+
+      - name: 'Cache Gradle Dependencies'
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-provider: basic
+
+      - name: 'Grant Gradle Permission'
+        run: |
+          chmod +x ./gradlew
+
+      - name: 'Setup Keystore'
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > keystore.jks
+
+      - name: 'Verify Keystore'
+        run: |
+          if [ -s "keystore.jks" ]; then
+            echo "Keystore file exists and is non-empty."
+          else
+            echo "Keystore file is missing or empty!" && exit 1
+          fi
+
+      - name: 'Setup Config'
+        run: |
+          echo "${{ secrets.CONFIG }}" > app/config.properties
+
+      - name: 'Update Version Information'
+        id: version
+        run: |
+          OLD_VERSION_CODE=$(grep 'VERSION_CODE=' app/version.properties | cut -d'=' -f2)
+          NEW_VERSION_CODE=$((OLD_VERSION_CODE + 1))
+          NEW_VERSION_NAME=$(date +'%Y.%m.%d')
+          
+          echo "VERSION_CODE=$NEW_VERSION_CODE" > app/version.properties
+          echo "VERSION_NAME=$NEW_VERSION_NAME" >> app/version.properties
+          
+          echo "version_code=$NEW_VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "version_name=$NEW_VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "tag=v$NEW_VERSION_NAME-b$NEW_VERSION_CODE" >> $GITHUB_OUTPUT
+
+      - name: 'Build APK'
+        env:
+          ANDROID_KEYSTORE_FILE: ${{ github.workspace }}/keystore.jks
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          ./gradlew :app:assembleRelease -x lint -x test
+
+      - name: 'Upload APK'
+        uses: actions/upload-artifact@v7
+        with:
+          name: app-release.apk
+          path: app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: 'error'
+
+      - name: 'Push Version Increment and Tag'
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add app/version.properties
+          git commit -m "Bump version to ${{ steps.version.outputs.version_code }}"
+          git tag ${{ steps.version.outputs.tag }}
+          
+          # Pull latest changes and rebase to avoid "failed to push some refs"
+          git pull --rebase origin ${{ github.ref_name }}
+          git push origin HEAD:${{ github.ref_name }} --tags
+
+      - name: 'Create Draft Release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create ${{ steps.version.outputs.tag }} \
+            --title "${{ steps.version.outputs.tag }}" \
+            --draft \
+            --notes "Draft release for version ${{ steps.version.outputs.version_name }} (Build ${{ steps.version.outputs.version_code }})" \
+            app/build/outputs/apk/release/app-release.apk
