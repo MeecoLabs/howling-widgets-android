@@ -1,5 +1,3 @@
-import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Properties
 
 plugins {
@@ -9,9 +7,6 @@ plugins {
     alias(libs.plugins.koin.compiler)
 }
 
-val configProperties = Properties()
-project.file("config.properties").inputStream().use { configProperties.load(it) }
-
 android {
     namespace = "eu.meecolabs.howlingwidgets"
     compileSdk {
@@ -20,11 +15,19 @@ android {
         }
     }
 
+    val versionInfo = Properties().apply {
+        project.file("version.properties").inputStream().use { load(it) }
+    }
+
+    val configProperties = Properties().apply {
+        project.file("config.properties").inputStream().use { load(it) }
+    }
+
     defaultConfig {
         applicationId = "eu.meecolabs.howlingwidgets"
         minSdk = 31
-        versionCode = 8
-        versionName = SimpleDateFormat("yyyy.MM.dd").format(Date())
+        versionCode = versionInfo.getProperty("VERSION_CODE").toInt()
+        versionName = versionInfo.getProperty("VERSION_NAME")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -40,24 +43,49 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = System.getenv("ANDROID_KEYSTORE_FILE")?.let { File(it) }
+            storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+            keyAlias = System.getenv("ANDROID_KEY_ALIAS")
+            keyPassword = System.getenv("ANDROID_KEY_PASSWORD")
+        }
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"
         }
 
         release {
-            isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            signingConfig = signingConfigs.getByName("release")
+
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+
+            optimization {
+                enable = false
+            }
         }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+
+    lint {
+        disable += "ModifierParameter"
+        checkReleaseBuilds = false
     }
 }
 
