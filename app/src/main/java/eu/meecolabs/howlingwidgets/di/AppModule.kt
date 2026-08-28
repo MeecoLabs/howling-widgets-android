@@ -5,11 +5,13 @@ import eu.meecolabs.appupdates.AppUpdateRepository
 import eu.meecolabs.appupdates.models.Repo
 import eu.meecolabs.howlingwidgets.BuildConfig
 import org.koin.core.annotation.ComponentScan
+import org.koin.core.annotation.Configuration
 import org.koin.core.annotation.Module
 import org.koin.core.annotation.Single
 
 @Module
-@ComponentScan("eu.meecolabs.howlingwidgets.breezy")
+@Configuration
+@ComponentScan("eu.meecolabs.howlingwidgets")
 class AppModule {
     @Single
     fun appUpdates(
