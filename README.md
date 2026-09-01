@@ -2,7 +2,7 @@
 
 [![Homepage](https://img.shields.io/badge/homepage-blue?style=for-the-badge)](https://apps.meecolabs.eu/howling)
 [![GitHub License](https://img.shields.io/github/license/MeecoLabs/howling-widgets-android?style=for-the-badge)](https://github.com/MeecoLabs/howling-widgets-android/blob/main/LICENSE)
-![F-Droid Version](https://img.shields.io/f-droid/v/eu.meecolabs.howlingwidgets?baseUrl=https%3A%2F%2Fapps.meecolabs.eu%2Frepo&style=for-the-badge)
+![F-Droid Repo](https://img.shields.io/badge/f--droid-custom_repo-blue?style=for-the-badge)
 [![GitHub Release](https://img.shields.io/github/v/release/MeecoLabs/howling-widgets-android?style=for-the-badge)](https://github.com/MeecoLabs/howling-widgets-android/releases/latest)
 
 A beautiful, lightweight, and privacy-respecting widget extension built exclusively for the Breeze Weather app. No tracking, no ads, just the forecast.
