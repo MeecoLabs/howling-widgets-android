@@ -2,7 +2,7 @@
 activityCompose = "1.13.0"
 agp = "9.4.0"
 appUpdates = "main-SNAPSHOT"
-breezyWeather = "09c0e4dd062601239c3f6062266d4b963577cefc"
+breezyWeather = "main-SNAPSHOT"
 coreKtx = "1.19.0"
 glance = "1.2.0"
 junit = "4.13.2"
