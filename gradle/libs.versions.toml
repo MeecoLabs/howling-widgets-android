@@ -1,6 +1,6 @@
 [versions]
 activityCompose = "1.13.0"
-agp = "9.4.0"
+agp = "9.4.1"
 appUpdates = "main-SNAPSHOT"
 breezyWeather = "main-SNAPSHOT"
 coreKtx = "1.19.1"
