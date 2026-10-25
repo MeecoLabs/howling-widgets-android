@@ -72,11 +72,14 @@ jobs:
         run: |
           ./gradlew :app:assembleRelease -x lint -x test
 
+          mv app/build/outputs/apk/release/app-release.apk fdroid-signed.apk
+
       - name: 'Upload APK'
         uses: actions/upload-artifact@v7
         with:
-          name: app-release.apk
-          path: app/build/outputs/apk/release/app-release.apk
+          name: release-artifacts
+          path: |
+            fdroid-signed.apk
           if-no-files-found: 'error'
 
       - name: 'Push Version Increment and Tag'
@@ -95,7 +98,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          mv app/build/outputs/apk/release/app-release.apk fdroid-signed.apk
           gh release create ${{ steps.version.outputs.tag }} \
             --title "${{ steps.version.outputs.tag }}" \
             --draft \
